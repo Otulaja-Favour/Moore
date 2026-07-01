@@ -138,8 +138,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           color: AppColors.textDarkPlaceholder,
           fontSize: 14,
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: AppColors.borderLight),
@@ -166,172 +165,181 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primary,
-      body: SafeArea(
-        bottom: false,
-        child: Column(
-          children: [
-            const AuthHeader(
-              title: 'Sign Up',
-              subtitle: "Welcome to Moore, let's get started!",
-              currentStep: 1,
-              totalSteps: 5,
-              showBackButton: false,
-            ),
-            const SizedBox(height: 12),
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: AppColors.cardBackground,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(24),
-                    topRight: Radius.circular(24),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF4A6CF7),
+              AppColors.gradientStart,
+              AppColors.gradientEnd,
+            ],
+            stops: [0.0, 0.45, 1.0],
+          ),
+        ),
+        child: SafeArea(
+          bottom: false,
+          child: Column(
+            children: [
+              const AuthHeader(
+                title: 'Sign Up',
+                subtitle: "Welcome to Moore, let's get started!",
+                currentStep: 1,
+                totalSteps: 5,
+                showBackButton: true,
+              ),
+              const SizedBox(height: 12),
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(32),
+                      topRight: Radius.circular(32),
+                    ),
                   ),
-                ),
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const MooreText(
-                          'Create your account',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textDarkSecondary,
-                        ),
-                        const SizedBox(height: 24),
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const MooreText(
+                            'Create your account',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textDarkSecondary,
+                          ),
+                          const SizedBox(height: 24),
 
-                        // ── Email ──
-                        const MooreText(
-                          'Email Address',
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textDarkPrimary,
-                        ),
-                        const SizedBox(height: 8),
-                        TextFormField(
-                          controller: _emailController,
-                          keyboardType: TextInputType.emailAddress,
-                          style: const TextStyle(
-                              fontFamily: 'Montserrat', fontSize: 15),
-                          decoration:
-                              _fieldDecoration('Enter Email Address'),
-                          validator: AppValidators.email,
-                        ),
-                        const SizedBox(height: 20),
+                          // Email
+                          const MooreText(
+                            'Email Address',
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textDarkPrimary,
+                          ),
+                          const SizedBox(height: 8),
+                          TextFormField(
+                            controller: _emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            style: const TextStyle(
+                                fontFamily: 'Montserrat', fontSize: 15),
+                            decoration: _fieldDecoration('Enter Email Address'),
+                            validator: AppValidators.email,
+                          ),
+                          const SizedBox(height: 20),
 
-                        // ── Phone ──
-                        const MooreText(
-                          'Phone Number',
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textDarkPrimary,
-                        ),
-                        const SizedBox(height: 8),
-                        TextFormField(
-                          controller: _phoneController,
-                          keyboardType: TextInputType.phone,
-                          style: const TextStyle(
-                              fontFamily: 'Montserrat', fontSize: 15),
-                          decoration: _fieldDecoration('eg. 7032536254')
-                              .copyWith(
-                            prefixIcon: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16),
-                              margin: const EdgeInsets.only(right: 8),
-                              decoration: const BoxDecoration(
-                                border: Border(
-                                  right: BorderSide(
-                                      color: AppColors.borderLight),
+                          // Phone
+                          const MooreText(
+                            'Phone Number',
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textDarkPrimary,
+                          ),
+                          const SizedBox(height: 8),
+                          TextFormField(
+                            controller: _phoneController,
+                            keyboardType: TextInputType.phone,
+                            style: const TextStyle(
+                                fontFamily: 'Montserrat', fontSize: 15),
+                            decoration: _fieldDecoration('eg. 7032536254').copyWith(
+                              prefixIcon: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                margin: const EdgeInsets.only(right: 8),
+                                decoration: const BoxDecoration(
+                                  border: Border(
+                                    right: BorderSide(color: AppColors.borderLight),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    MooreText(
+                                      '+234',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.grey[700],
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Icon(Icons.keyboard_arrow_down,
+                                        size: 16, color: Colors.grey[600]),
+                                  ],
                                 ),
                               ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  MooreText(
-                                    '+234',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.grey[700],
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Icon(Icons.keyboard_arrow_down,
-                                      size: 16,
-                                      color: Colors.grey[600]),
-                                ],
-                              ),
                             ),
+                            validator: AppValidators.phoneNumber,
                           ),
-                          validator: AppValidators.phoneNumber,
-                        ),
-                        const SizedBox(height: 24),
+                          const SizedBox(height: 24),
 
-                        // ── Terms ──
-                        Wrap(
-                          children: [
-                            const MooreText(
-                              "By proceeding you agree to Moore's ",
-                              fontSize: 12,
-                              color: AppColors.textDarkSecondary,
-                            ),
-                            GestureDetector(
-                              onTap: _showTermsBottomSheet,
-                              child: const MooreText(
-                                'Terms of Service',
+                          // Terms
+                          Wrap(
+                            children: [
+                              const MooreText(
+                                "By proceeding you agree to Moore's ",
                                 fontSize: 12,
+                                color: AppColors.textDarkSecondary,
+                              ),
+                              GestureDetector(
+                                onTap: _showTermsBottomSheet,
+                                child: const MooreText(
+                                  'Terms of Service',
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textBlue,
+                                ),
+                              ),
+                              const MooreText(
+                                ' and ',
+                                fontSize: 12,
+                                color: AppColors.textDarkSecondary,
+                              ),
+                              GestureDetector(
+                                onTap: _showTermsBottomSheet,
+                                child: const MooreText(
+                                  'Privacy Policy',
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textBlue,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 36),
+
+                          MooreButton(
+                            text: 'Proceed',
+                            onPressed: _handleSignUpSubmit,
+                          ),
+                          const SizedBox(height: 24),
+
+                          Center(
+                            child: TextButton(
+                              onPressed: () => Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (_) => const LoginScreen()),
+                              ),
+                              child: const MooreText(
+                                'I already have an account',
+                                fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.textBlue,
                               ),
                             ),
-                            const MooreText(
-                              ' and ',
-                              fontSize: 12,
-                              color: AppColors.textDarkSecondary,
-                            ),
-                            GestureDetector(
-                              onTap: _showTermsBottomSheet,
-                              child: const MooreText(
-                                'Privacy Policy',
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textBlue,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 36),
-
-                        MooreButton(
-                          text: 'Proceed',
-                          onPressed: _handleSignUpSubmit,
-                        ),
-                        const SizedBox(height: 24),
-
-                        Center(
-                          child: TextButton(
-                            onPressed: () => Navigator.of(context)
-                                .pushReplacement(
-                              MaterialPageRoute(
-                                  builder: (_) => const LoginScreen()),
-                            ),
-                            child: const MooreText(
-                              'I already have an account',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textBlue,
-                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

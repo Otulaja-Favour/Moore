@@ -32,10 +32,8 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
-
     final user = await StorageService.instance
         .validatePhone(_phoneController.text.trim());
-
     setState(() => _isLoading = false);
 
     if (!mounted) return;
@@ -43,9 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-            'No account found for this number. Please sign up first.',
-          ),
+          content: Text('No account found for this number. Please sign up first.'),
           backgroundColor: Colors.red,
           duration: Duration(seconds: 4),
         ),
@@ -53,7 +49,6 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    // Phone matched — go to passcode entry
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => PasscodeScreen(phoneNumber: user.phoneNumber),
@@ -61,150 +56,165 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  InputDecoration _fieldDecoration(String hint) => InputDecoration(
+        hintText: hint,
+        hintStyle: const TextStyle(
+          fontFamily: 'Montserrat',
+          color: AppColors.textDarkPlaceholder,
+          fontSize: 14,
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: AppColors.borderLight),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: AppColors.borderLight),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.red, width: 1.2),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.red, width: 1.5),
+        ),
+        errorStyle: const TextStyle(fontFamily: 'Montserrat', fontSize: 12),
+      );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primary,
-      body: SafeArea(
-        bottom: false,
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                const AuthHeader(
-                  title: 'Welcome Back!',
-                  subtitle: 'Log in to continue',
-                  showLogo: true,
-                  showBackButton: false, // Login is a root screen
-                ),
-                const SizedBox(height: 12),
-                Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: AppColors.cardBackground,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(24),
-                        topRight: Radius.circular(24),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF4A6CF7),
+              AppColors.gradientStart,
+              AppColors.gradientEnd,
+            ],
+            stops: [0.0, 0.45, 1.0],
+          ),
+        ),
+        child: SafeArea(
+          bottom: false,
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  const AuthHeader(
+                    title: 'Welcome Back!',
+                    subtitle: 'Log in to continue',
+                    showLogo: true,
+                    showBackButton: true,
+                  ),
+                  const SizedBox(height: 12),
+                  Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(32),
+                          topRight: Radius.circular(32),
+                        ),
                       ),
-                    ),
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 16),
-                            const MooreText(
-                              'Phone Number',
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textDarkPrimary,
-                            ),
-                            const SizedBox(height: 8),
-                            TextFormField(
-                              controller: _phoneController,
-                              keyboardType: TextInputType.phone,
-                              style: const TextStyle(
-                                  fontFamily: 'Montserrat', fontSize: 15),
-                              decoration: InputDecoration(
-                                hintText: 'eg. 7032536254',
-                                hintStyle: const TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  color: AppColors.textDarkPlaceholder,
-                                  fontSize: 14,
-                                ),
-                                prefixIcon: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16),
-                                  margin: const EdgeInsets.only(right: 8),
-                                  decoration: const BoxDecoration(
-                                    border: Border(
-                                      right: BorderSide(
-                                          color: AppColors.borderLight),
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 16),
+                              const MooreText(
+                                'Phone Number',
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textDarkPrimary,
+                              ),
+                              const SizedBox(height: 8),
+                              TextFormField(
+                                controller: _phoneController,
+                                keyboardType: TextInputType.phone,
+                                style: const TextStyle(
+                                    fontFamily: 'Montserrat', fontSize: 15),
+                                decoration: _fieldDecoration('eg. 7032536254').copyWith(
+                                  prefixIcon: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                    margin: const EdgeInsets.only(right: 8),
+                                    decoration: const BoxDecoration(
+                                      border: Border(
+                                        right: BorderSide(color: AppColors.borderLight),
+                                      ),
                                     ),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      MooreText('234',
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        MooreText(
+                                          '+234',
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
-                                          color: Colors.grey[700]),
-                                      const SizedBox(width: 4),
-                                      Icon(Icons.keyboard_arrow_down,
-                                          size: 16, color: Colors.grey[600]),
-                                    ],
-                                  ),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 16),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                      color: AppColors.borderLight),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                      color: AppColors.borderLight),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                      color: AppColors.primary, width: 1.5),
-                                ),
-                                errorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                      color: Colors.red, width: 1.2),
-                                ),
-                                errorStyle: const TextStyle(
-                                    fontFamily: 'Montserrat'),
-                              ),
-                              validator: AppValidators.phoneNumber,
-                            ),
-                            const SizedBox(height: 36),
-                            _isLoading
-                                ? const Center(
-                                    child: CircularProgressIndicator(
-                                      color: AppColors.primary,
+                                          color: Colors.grey[700],
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Icon(Icons.keyboard_arrow_down,
+                                            size: 16, color: Colors.grey[600]),
+                                      ],
                                     ),
-                                  )
-                                : MooreButton(
-                                    text: 'Login',
-                                    onPressed: _handleLogin,
                                   ),
-                            const SizedBox(height: 48),
-                            Center(
-                              child: TextButton(
-                                onPressed: () => Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (_) => const SignUpScreen()),
                                 ),
-                                child: const MooreText(
-                                  "I don't have an account",
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.textBlue,
+                                validator: AppValidators.phoneNumber,
+                              ),
+                              const SizedBox(height: 36),
+                              _isLoading
+                                  ? const Center(
+                                      child: CircularProgressIndicator(
+                                          color: AppColors.primary),
+                                    )
+                                  : MooreButton(
+                                      text: 'Login',
+                                      onPressed: _handleLogin,
+                                    ),
+                              const SizedBox(height: 48),
+                              Center(
+                                child: TextButton(
+                                  onPressed: () => Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (_) => const SignUpScreen()),
+                                  ),
+                                  child: const MooreText(
+                                    "I don't have an account",
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textBlue,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            const Positioned(
-              right: 24,
-              bottom: 40,
-              child: SupportButton(),
-            ),
-          ],
+                ],
+              ),
+              const Positioned(
+                right: 24,
+                bottom: 40,
+                child: SupportButton(),
+              ),
+            ],
+          ),
         ),
       ),
     );

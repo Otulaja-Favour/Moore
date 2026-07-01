@@ -89,7 +89,7 @@ class AuthHeader extends StatelessWidget {
                   if (currentStep != null && totalSteps != null)
                     const SizedBox(height: 6),
                   Image.asset(
-                    AppAssets.logo,
+                    AppAssets.logo2,
                     height: 28,
                     fit: BoxFit.contain,
                   ),
