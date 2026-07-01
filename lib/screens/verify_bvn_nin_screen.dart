@@ -115,14 +115,14 @@ class _VerifyBvnNinScreenState extends State<VerifyBvnNinScreen> {
   }
 
   void _showConfirmPhoneDialog() {
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      barrierDismissible: false,
-      builder: (_) => _ConfirmPhoneDialog(
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _ConfirmPhoneSheet(
         phoneNumber: widget.phoneNumber,
         onYes: () {
-          Navigator.pop(context); // close dialog
-          // Proceed to OTP screen
+          Navigator.pop(context); // close sheet
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (_) => VerifyBvnOtpScreen(
@@ -136,8 +136,7 @@ class _VerifyBvnNinScreenState extends State<VerifyBvnNinScreen> {
           );
         },
         onNo: () {
-          Navigator.pop(context); // close dialog
-          // User can't access that number — show update screen
+          Navigator.pop(context); // close sheet
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (_) => const UpdateBvnDetailsScreen(),
@@ -337,14 +336,14 @@ class _VerifyBvnNinScreenState extends State<VerifyBvnNinScreen> {
 }
 
 // ═══════════════════════════════════════════════════════════
-// CONFIRM PHONE DIALOG
+// CONFIRM PHONE BOTTOM SHEET
 // ═══════════════════════════════════════════════════════════
-class _ConfirmPhoneDialog extends StatelessWidget {
+class _ConfirmPhoneSheet extends StatelessWidget {
   final String phoneNumber;
   final VoidCallback onYes;
   final VoidCallback onNo;
 
-  const _ConfirmPhoneDialog({
+  const _ConfirmPhoneSheet({
     required this.phoneNumber,
     required this.onYes,
     required this.onNo,
@@ -358,81 +357,94 @@ class _ConfirmPhoneDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      insetPadding: const EdgeInsets.symmetric(horizontal: 28),
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Info icon
-            Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.08),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.info_outline_rounded,
-                color: AppColors.primary,
-                size: 32,
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            const MooreText(
-              'Confirm the phone number\nassociated with your BVN.',
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textDarkPrimary,
-              textAlign: TextAlign.center,
-              height: 1.4,
-            ),
-            const SizedBox(height: 12),
-
-            RichText(
-              textAlign: TextAlign.center,
-              text: TextSpan(
-                style: const TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 13,
-                  color: AppColors.textDarkSecondary,
-                  height: 1.5,
-                ),
-                children: [
-                  const TextSpan(
-                      text: 'Please confirm that you can still access '),
-                  TextSpan(
-                    text: _masked(phoneNumber),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textDarkPrimary,
-                    ),
-                  ),
-                  const TextSpan(
-                      text:
-                          ", and we'll send you a verification code."),
-                ],
-              ),
-            ),
-            const SizedBox(height: 28),
-
-            // Yes button
-            MooreButton(text: 'Yes', onPressed: onYes),
-            const SizedBox(height: 12),
-
-            // No button
-            MooreButton(
-              text: 'No',
-              isOutlined: true,
-              textColor: AppColors.primary,
-              borderColor: AppColors.primary,
-              onPressed: onNo,
-            ),
-          ],
+    return Container(
+      padding: EdgeInsets.only(
+        left: 24,
+        right: 24,
+        top: 20,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 32,
+      ),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
         ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Drag handle
+          Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          // Info icon
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: AppColors.primary.withOpacity(0.08),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.info_outline_rounded,
+              color: AppColors.primary,
+              size: 32,
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          const MooreText(
+            'Confirm the phone number\nassociated with your BVN.',
+            fontSize: 17,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textDarkPrimary,
+            textAlign: TextAlign.center,
+            height: 1.4,
+          ),
+          const SizedBox(height: 12),
+
+          RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              style: const TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 13,
+                color: AppColors.textDarkSecondary,
+                height: 1.5,
+              ),
+              children: [
+                const TextSpan(text: 'Please confirm that you can still access '),
+                TextSpan(
+                  text: _masked(phoneNumber),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textDarkPrimary,
+                  ),
+                ),
+                const TextSpan(text: ", and we'll send you a verification code."),
+              ],
+            ),
+          ),
+          const SizedBox(height: 28),
+
+          MooreButton(text: 'Yes', onPressed: onYes),
+          const SizedBox(height: 12),
+          MooreButton(
+            text: 'No',
+            isOutlined: true,
+            textColor: AppColors.primary,
+            borderColor: AppColors.primary,
+            onPressed: onNo,
+          ),
+        ],
       ),
     );
   }
@@ -510,8 +522,7 @@ class UpdateBvnDetailsScreen extends StatelessWidget {
 
                       MooreButton(
                         text: 'Okay',
-                        onPressed: () =>
-                            Navigator.of(context).popUntil((r) => r.isFirst),
+                        onPressed: () => Navigator.of(context).pop(),
                       ),
                       const SizedBox(height: 24),
                     ],

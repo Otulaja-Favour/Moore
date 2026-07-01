@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:moove/components/custom_text.dart';
 import 'package:moove/constants/colors.dart';
 
-/// Reusable phone-style numeric keypad used across OTP and PIN screens.
+/// Reusable phone-style numeric keypad.
+/// Used on OTP screens (white bg, dark keys) and passcode screens (handled separately).
 class NumericKeypad extends StatelessWidget {
   final void Function(String) onKeyTap;
   final VoidCallback onBackspace;
 
-  /// Optional label for the bottom-left key. Pass null to leave it empty.
+  /// Optional bottom-left label (e.g. "Reset"). Null = empty space.
   final String? bottomLeftLabel;
-
-  /// Optional callback for the bottom-left key.
   final VoidCallback? onBottomLeftTap;
+
+  /// Whether to show ABC/DEF sub-labels under digits. False for OTP screens.
+  final bool showSubLabels;
 
   const NumericKeypad({
     super.key,
@@ -19,6 +21,7 @@ class NumericKeypad extends StatelessWidget {
     required this.onBackspace,
     this.bottomLeftLabel,
     this.onBottomLeftTap,
+    this.showSubLabels = false,
   });
 
   static const Map<String, String> _subLabels = {
@@ -34,21 +37,21 @@ class NumericKeypad extends StatelessWidget {
 
   Widget _digitKey(String digit) {
     return Expanded(
-      child: InkWell(
+      child: GestureDetector(
         onTap: () => onKeyTap(digit),
-        borderRadius: BorderRadius.circular(40),
-        child: SizedBox(
-          height: 64,
+        child: Container(
+          height: 60,
+          alignment: Alignment.center,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               MooreText(
                 digit,
-                fontSize: 22,
+                fontSize: 24,
                 fontWeight: FontWeight.w500,
                 color: AppColors.textDarkPrimary,
               ),
-              if (_subLabels[digit] != null)
+              if (showSubLabels && _subLabels[digit] != null)
                 MooreText(
                   _subLabels[digit]!,
                   fontSize: 9,
@@ -66,7 +69,7 @@ class NumericKeypad extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
           Row(children: [_digitKey('1'), _digitKey('2'), _digitKey('3')]),
@@ -74,34 +77,31 @@ class NumericKeypad extends StatelessWidget {
           Row(children: [_digitKey('7'), _digitKey('8'), _digitKey('9')]),
           Row(
             children: [
-              // Bottom-left: optional label or empty
+              // Bottom-left
               Expanded(
                 child: bottomLeftLabel != null
-                    ? InkWell(
+                    ? GestureDetector(
                         onTap: onBottomLeftTap,
-                        borderRadius: BorderRadius.circular(40),
-                        child: SizedBox(
-                          height: 64,
-                          child: Center(
-                            child: MooreText(
-                              bottomLeftLabel!,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textDarkSecondary,
-                            ),
+                        child: Container(
+                          height: 60,
+                          alignment: Alignment.center,
+                          child: MooreText(
+                            bottomLeftLabel!,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textDarkSecondary,
                           ),
                         ),
                       )
-                    : const SizedBox(height: 64),
+                    : const SizedBox(height: 60),
               ),
               _digitKey('0'),
               // Backspace
               Expanded(
-                child: InkWell(
+                child: GestureDetector(
                   onTap: onBackspace,
-                  borderRadius: BorderRadius.circular(40),
                   child: const SizedBox(
-                    height: 64,
+                    height: 60,
                     child: Icon(
                       Icons.backspace_outlined,
                       color: AppColors.textDarkPrimary,
