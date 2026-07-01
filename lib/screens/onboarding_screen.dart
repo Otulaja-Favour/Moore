@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:moove/components/custom_button.dart';
 import 'package:moove/components/custom_text.dart';
 import 'package:moove/constants/assets.dart';
 import 'package:moove/constants/colors.dart';
@@ -160,10 +161,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                   ),
 
-                  // ── Button container — darker rounded box ──
+                  // ── Button container — #6F94F3 lighter blue ──
                   Container(
-                    margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
+                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 36),
                     decoration: const BoxDecoration(
                       color: AppColors.onboardingContainer,
                       borderRadius: BorderRadius.only(
@@ -174,57 +174,30 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // "I already have an account" — outlined pill
-                        SizedBox(
-                          width: double.infinity,
-                          height: 54,
-                          child: OutlinedButton(
-                            onPressed: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (_) => const LoginScreen()),
-                            ),
-                            style: OutlinedButton.styleFrom(
-                              side: const BorderSide(
-                                color: AppColors.borderDarkOutline,
-                                width: 1.5,
-                              ),
-                              backgroundColor: Colors.transparent,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                            child: const MooreText(
-                              'I already have an account',
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textLightPrimary,
-                            ),
+                        // "I already have an account"
+                        MooreButton(
+                          text: 'I already have an account',
+                          isOutlined: true,
+                          borderColor: Colors.white,
+                          backgroundColor: Colors.transparent,
+                          textColor: AppColors.textLightPrimary,
+                          borderRadius: 14,
+                          onPressed: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (_) => const LoginScreen()),
                           ),
                         ),
                         const SizedBox(height: 12),
 
-                        // "Open account" — lighter blue solid pill
-                        SizedBox(
-                          width: double.infinity,
-                          height: 54,
-                          child: ElevatedButton(
-                            onPressed: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (_) => const SignUpScreen()),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.onboardingBtnOpen,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                            child: const MooreText(
-                              'Open account',
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textLightPrimary,
-                            ),
+                        // "Open account"
+                        MooreButton(
+                          text: 'Open account',
+                          backgroundColor: AppColors.onboardingBg,
+                          textColor: AppColors.textLightPrimary,
+                          borderRadius: 14,
+                          onPressed: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (_) => const SignUpScreen()),
                           ),
                         ),
                       ],
