@@ -20,15 +20,23 @@ class NextStepsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Illustration (same welcome.svg) ──
-            SvgPicture.asset(
-              AppAssets.welcome,
+            // ── Illustration ──
+            SizedBox(
               width: double.infinity,
               height: 220,
-              fit: BoxFit.cover,
-              placeholderBuilder: (_) => Container(
-                height: 220,
-                color: const Color(0xFFF0F4FF),
+              child: SvgPicture.asset(
+                AppAssets.welcome,
+                fit: BoxFit.contain,
+                placeholderBuilder: (_) => Container(
+                  height: 220,
+                  color: const Color(0xFFF0F4FF),
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.primary,
+                      strokeWidth: 2,
+                    ),
+                  ),
+                ),
               ),
             ),
 

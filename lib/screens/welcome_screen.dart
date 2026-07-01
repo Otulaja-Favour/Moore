@@ -21,14 +21,22 @@ class WelcomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Welcome illustration ──
-            SvgPicture.asset(
-              AppAssets.welcome,
+            SizedBox(
               width: double.infinity,
               height: 220,
-              fit: BoxFit.cover,
-              placeholderBuilder: (_) => Container(
-                height: 220,
-                color: const Color(0xFFF0F4FF),
+              child: SvgPicture.asset(
+                AppAssets.welcome,
+                fit: BoxFit.contain,
+                placeholderBuilder: (_) => Container(
+                  height: 220,
+                  color: const Color(0xFFF0F4FF),
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.primary,
+                      strokeWidth: 2,
+                    ),
+                  ),
+                ),
               ),
             ),
 
