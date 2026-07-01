@@ -3,7 +3,8 @@ class AppAssets {
 
   // Logos
   static const String logo = 'assest/img/logo.png';
-  static const String logo2 = 'assest/img/logo2.png'; // white version for dark backgrounds
+  static const String logo2 = 'assest/img/logo2.png'; // white version for onboarding
+  static const String logo3 = 'assest/img/logo3.png'; // auth header logo
 
   // Onboarding
   static const String onboardingBackdrop = 'assest/img/onabordingbackdrop.png';

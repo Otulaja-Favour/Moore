@@ -11,8 +11,6 @@ class AuthHeader extends StatelessWidget {
   final int? totalSteps;
   final VoidCallback? onBackPressed;
   final bool showLogo;
-
-  /// Set to false on root screens (Login, SignUp) where there's nothing to go back to.
   final bool showBackButton;
 
   const AuthHeader({
@@ -29,73 +27,95 @@ class AuthHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
-      child: Row(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Back Arrow + Text Titles
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (showBackButton) ...[
-                  IconButton(
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: onBackPressed ?? () => Navigator.pop(context),
+
+          // ── Row 1: back arrow  |  logo + "Moore" ──
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Back arrow or empty space
+              if (showBackButton)
+                GestureDetector(
+                  onTap: onBackPressed ?? () => Navigator.pop(context),
+                  child: const Icon(
+                    Icons.arrow_back,
+                    color: AppColors.textLightPrimary,
+                    size: 22,
                   ),
-                  const SizedBox(width: 12),
-                ],
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      MooreText(
-                        title,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textLightPrimary,
-                      ),
-                      if (subtitle != null && subtitle!.isNotEmpty) ...[
-                        const SizedBox(height: 4),
-                        MooreText(
-                          subtitle!,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.textLightSecondary.withOpacity(0.85),
-                        ),
-                      ],
-                    ],
-                  ),
+                )
+              else
+                const SizedBox(width: 22),
+
+              // Logo image + "Moore" label
+              if (showLogo)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      AppAssets.logo3,
+                      height: 28,
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                    ),
+                    const SizedBox(width: 6),
+                    const MooreText(
+                      'Moore',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textLightPrimary,
+                      letterSpacing: 0.3,
+                    ),
+                  ],
+                )
+              else
+                const SizedBox.shrink(),
+            ],
+          ),
+
+          const SizedBox(height: 20),
+
+          // ── Row 2: title  |  step counter ──
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Title
+              Expanded(
+                child: MooreText(
+                  title,
+                  fontSize: 26,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textLightPrimary,
+                ),
+              ),
+
+              // Step counter
+              if (currentStep != null && totalSteps != null) ...[
+                const SizedBox(width: 12),
+                MooreText(
+                  'Step $currentStep of $totalSteps',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textLightMuted,
                 ),
               ],
-            ),
+            ],
           ),
-          // Step counter + logo
-          if (showLogo || (currentStep != null && totalSteps != null))
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                if (currentStep != null && totalSteps != null)
-                  MooreText(
-                    'Step $currentStep of $totalSteps',
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textLightMuted,
-                  ),
-                if (showLogo) ...[
-                  if (currentStep != null && totalSteps != null)
-                    const SizedBox(height: 6),
-                  Image.asset(
-                    AppAssets.logo2,
-                    height: 28,
-                    fit: BoxFit.contain,
-                  ),
-                ],
-              ],
+
+          // ── Row 3: subtitle ──
+          if (subtitle != null && subtitle!.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            MooreText(
+              subtitle!,
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              color: AppColors.textLightSecondary,
             ),
+          ],
         ],
       ),
     );
