@@ -7,7 +7,8 @@ import 'package:moove/constants/colors.dart';
 import 'package:moove/screens/security_question_screen.dart';
 
 class ReplaceDeviceScreen extends StatefulWidget {
-  const ReplaceDeviceScreen({super.key});
+  final String phoneNumber;
+  const ReplaceDeviceScreen({super.key, required this.phoneNumber});
 
   @override
   State<ReplaceDeviceScreen> createState() => _ReplaceDeviceScreenState();
@@ -29,7 +30,11 @@ class _ReplaceDeviceScreenState extends State<ReplaceDeviceScreen> {
 
   void _handleReplaceDevice() {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const SecurityQuestionScreen()),
+      MaterialPageRoute(
+        builder: (context) => SecurityQuestionScreen(
+          phoneNumber: widget.phoneNumber,
+        ),
+      ),
     );
   }
 

@@ -4,9 +4,11 @@ import 'package:moove/components/auth_header.dart';
 import 'package:moove/components/custom_button.dart';
 import 'package:moove/components/custom_text.dart';
 import 'package:moove/constants/colors.dart';
+import 'package:moove/screens/login_flow_screens.dart';
 
 class SecurityQuestionScreen extends StatefulWidget {
-  const SecurityQuestionScreen({super.key});
+  final String phoneNumber;
+  const SecurityQuestionScreen({super.key, required this.phoneNumber});
 
   @override
   State<SecurityQuestionScreen> createState() => _SecurityQuestionScreenState();
@@ -57,7 +59,9 @@ class _SecurityQuestionScreenState extends State<SecurityQuestionScreen> {
                   topRight: Radius.circular(24),
                 ),
               ),
-              child: const _OtpBottomSheetFlow(),
+              child: _OtpBottomSheetFlow(
+                phoneNumber: widget.phoneNumber,
+              ),
             ),
           );
         },
@@ -225,7 +229,8 @@ class _SecurityQuestionScreenState extends State<SecurityQuestionScreen> {
 }
 
 class _OtpBottomSheetFlow extends StatefulWidget {
-  const _OtpBottomSheetFlow();
+  final String phoneNumber;
+  const _OtpBottomSheetFlow({required this.phoneNumber});
 
   @override
   State<_OtpBottomSheetFlow> createState() => _OtpBottomSheetFlowState();
@@ -258,16 +263,32 @@ class _OtpBottomSheetFlowState extends State<_OtpBottomSheetFlow> {
   }
 
   void _handleProceed() {
-    if (!_isCodeInvalid) {
-      // First click: trigger invalid code state (as shown in Figma)
-      setState(() {
-        _isCodeInvalid = true;
-      });
+    final otp = _controllers.map((c) => c.text).join();
+    if (otp.length < 4) {
+      setState(() => _isCodeInvalid = true);
+      return;
+    }
+    if (otp == '1234') {
+      // OTP correct — show Device Linked Successfully sheet
+      Navigator.pop(context); // close OTP sheet
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        isDismissible: false,
+        builder: (_) => _DeviceLinkedSheet(
+          onProceed: () {
+            Navigator.pop(context);
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const ActivateBiometricsScreen(),
+              ),
+            );
+          },
+        ),
+      );
     } else {
-      // Second click: show binding failure content inside the sheet
-      setState(() {
-        _showFailureContent = true;
-      });
+      setState(() => _isCodeInvalid = true);
     }
   }
 
@@ -318,6 +339,13 @@ class _OtpBottomSheetFlowState extends State<_OtpBottomSheetFlow> {
     final themeBorderColor = _isCodeInvalid ? Colors.red[300]! : AppColors.borderLight;
     final themeTextColor = _isCodeInvalid ? Colors.red : AppColors.textDarkPrimary;
 
+    // Mask the phone number
+    String masked = widget.phoneNumber;
+    final digits = widget.phoneNumber.replaceAll(RegExp(r'\D'), '');
+    if (digits.length >= 7) {
+      masked = '+${digits.substring(0, 5)}****${digits.substring(digits.length - 3)}';
+    }
+
     return SingleChildScrollView(
       key: const ValueKey('OtpContent'),
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
@@ -325,7 +353,6 @@ class _OtpBottomSheetFlowState extends State<_OtpBottomSheetFlow> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(height: 16),
-          // Lock Icon Graphic
           Container(
             width: 80,
             height: 80,
@@ -340,7 +367,6 @@ class _OtpBottomSheetFlowState extends State<_OtpBottomSheetFlow> {
             ),
           ),
           const SizedBox(height: 20),
-          // Title
           const MooreText(
             'Verify OTP',
             fontSize: 20,
@@ -348,15 +374,42 @@ class _OtpBottomSheetFlowState extends State<_OtpBottomSheetFlow> {
             color: AppColors.textDarkPrimary,
           ),
           const SizedBox(height: 8),
-          // Subtitle
-          const MooreText(
-            'We sent a 4-digit code to +234*****018',
-            fontSize: 13,
-            fontWeight: FontWeight.w400,
-            color: AppColors.textDarkSecondary,
+          RichText(
             textAlign: TextAlign.center,
+            text: TextSpan(
+              style: const TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 13,
+                color: AppColors.textDarkSecondary,
+              ),
+              children: [
+                const TextSpan(text: 'We sent a 4 digit code to '),
+                TextSpan(
+                  text: masked,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textDarkPrimary,
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 8),
+          // Test hint
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withOpacity(0.07),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const MooreText(
+              'Test OTP: 1234',
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: AppColors.primary,
+            ),
+          ),
+          const SizedBox(height: 24),
           // OTP Input Fields
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -507,6 +560,72 @@ class _OtpBottomSheetFlowState extends State<_OtpBottomSheetFlow> {
             },
           ),
           const SizedBox(height: 12),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// Device Linked Successfully bottom sheet
+// ─────────────────────────────────────────────
+class _DeviceLinkedSheet extends StatelessWidget {
+  final VoidCallback onProceed;
+  const _DeviceLinkedSheet({required this.onProceed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(24, 20, 24, 36),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Drag handle
+          Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          // Balloon image
+          Image.asset(
+            'assest/img/congratulation.png',
+            height: 130,
+            fit: BoxFit.contain,
+            errorBuilder: (_, __, ___) =>
+                const Text('🎉', style: TextStyle(fontSize: 56)),
+          ),
+          const SizedBox(height: 16),
+
+          const MooreText(
+            'Device Linked Successfully',
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
+            color: AppColors.textDarkPrimary,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 10),
+          const MooreText(
+            'This device has been set as your primary device.',
+            fontSize: 13,
+            color: AppColors.textDarkSecondary,
+            textAlign: TextAlign.center,
+            height: 1.5,
+          ),
+          const SizedBox(height: 28),
+
+          MooreButton(text: 'Proceed', onPressed: onProceed),
         ],
       ),
     );

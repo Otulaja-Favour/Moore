@@ -4,6 +4,8 @@ import 'package:moove/components/custom_text.dart';
 import 'package:moove/constants/assets.dart';
 import 'package:moove/constants/colors.dart';
 import 'package:moove/screens/dashboard_screen.dart';
+import 'package:moove/screens/login_flow_screens.dart';
+import 'package:moove/screens/replace_device_screen.dart';
 import 'package:moove/services/storage_service.dart';
 
 /// Login passcode entry screen — validates against stored passcode.
@@ -51,9 +53,12 @@ class _PasscodeScreenState extends State<PasscodeScreen> {
     if (!mounted) return;
     if (ok) {
       await StorageService.instance.setLoggedIn(true);
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const DashboardScreen()),
-        (route) => false,
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => ReplaceDeviceScreen(
+            phoneNumber: widget.phoneNumber,
+          ),
+        ),
       );
     } else {
       setState(() {
