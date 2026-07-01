@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
+import 'package:moove/components/app_input_field.dart';
 import 'package:moove/components/auth_header.dart';
 import 'package:moove/components/custom_button.dart';
 import 'package:moove/components/custom_text.dart';
@@ -41,7 +42,8 @@ class _LoginScreenState extends State<LoginScreen> {
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('No account found for this number. Please sign up first.'),
+          content: Text(
+              'No account found for this number. Please sign up first.'),
           backgroundColor: Colors.red,
           duration: Duration(seconds: 4),
         ),
@@ -49,43 +51,10 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => PasscodeScreen(phoneNumber: user.phoneNumber),
-      ),
-    );
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => PasscodeScreen(phoneNumber: user.phoneNumber),
+    ));
   }
-
-  InputDecoration _fieldDecoration(String hint) => InputDecoration(
-        hintText: hint,
-        hintStyle: const TextStyle(
-          fontFamily: 'Montserrat',
-          color: AppColors.textDarkPlaceholder,
-          fontSize: 14,
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.borderLight),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.borderLight),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.red, width: 1.2),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.red, width: 1.5),
-        ),
-        errorStyle: const TextStyle(fontFamily: 'Montserrat', fontSize: 12),
-      );
 
   @override
   Widget build(BuildContext context) {
@@ -97,12 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF4A6CF7),
-              AppColors.gradientStart,
-              AppColors.gradientEnd,
-            ],
-            stops: [0.0, 0.45, 1.0],
+            colors: [AppColors.gradientStart, AppColors.gradientEnd],
           ),
         ),
         child: SafeArea(
@@ -129,66 +93,38 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       child: SingleChildScrollView(
-                        padding: const EdgeInsets.all(24.0),
+                        padding: const EdgeInsets.all(24),
                         child: Form(
                           key: _formKey,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const SizedBox(height: 16),
-                              const MooreText(
-                                'Phone Number',
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textDarkPrimary,
-                              ),
                               const SizedBox(height: 8),
-                              TextFormField(
+
+                              // Phone number field
+                              LabeledInputField(
+                                label: 'Phone Number',
                                 controller: _phoneController,
+                                hint: 'eg. 7032536254',
                                 keyboardType: TextInputType.phone,
-                                style: const TextStyle(
-                                    fontFamily: 'Montserrat', fontSize: 15),
-                                decoration: _fieldDecoration('eg. 7032536254').copyWith(
-                                  prefixIcon: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                                    margin: const EdgeInsets.only(right: 8),
-                                    decoration: const BoxDecoration(
-                                      border: Border(
-                                        right: BorderSide(color: AppColors.borderLight),
-                                      ),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        MooreText(
-                                          '+234',
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.grey[700],
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Icon(Icons.keyboard_arrow_down,
-                                            size: 16, color: Colors.grey[600]),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                                prefixWidget: const PhonePrefixWidget(),
                                 validator: AppValidators.phoneNumber,
                               ),
                               const SizedBox(height: 36),
+
                               _isLoading
                                   ? const Center(
                                       child: CircularProgressIndicator(
-                                          color: AppColors.primary),
-                                    )
+                                          color: AppColors.primary))
                                   : MooreButton(
                                       text: 'Login',
-                                      onPressed: _handleLogin,
-                                    ),
+                                      onPressed: _handleLogin),
                               const SizedBox(height: 48),
+
                               Center(
                                 child: TextButton(
-                                  onPressed: () => Navigator.of(context).push(
+                                  onPressed: () =>
+                                      Navigator.of(context).push(
                                     MaterialPageRoute(
                                         builder: (_) => const SignUpScreen()),
                                   ),

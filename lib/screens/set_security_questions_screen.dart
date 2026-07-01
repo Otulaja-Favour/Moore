@@ -1,11 +1,13 @@
 // ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
+import 'package:moove/components/app_input_field.dart';
 import 'package:moove/components/auth_header.dart';
 import 'package:moove/components/custom_button.dart';
 import 'package:moove/components/custom_text.dart';
 import 'package:moove/constants/colors.dart';
 import 'package:moove/screens/dashboard_screen.dart';
 import 'package:moove/services/storage_service.dart';
+import 'package:moove/utils/validators.dart';
 
 class SetSecurityQuestionsScreen extends StatefulWidget {
   final String phoneNumber;
@@ -289,50 +291,40 @@ class _SetSecurityQuestionsScreenState
           color: AppColors.textDarkPrimary,
         ),
         const SizedBox(height: 8),
-        TextFormField(
+        AppInputField(
           controller: _answerControllers[index],
-          style: const TextStyle(fontFamily: 'Montserrat', fontSize: 14),
-          decoration: _inputDecoration().copyWith(hintText: 'Your answer'),
-          validator: (v) {
-            if (v == null || v.trim().isEmpty) {
-              return 'Please enter your answer';
-            }
-            if (v.trim().length < 2) {
-              return 'Answer is too short';
-            }
-            return null;
-          },
+          hint: 'Your answer',
+          keyboardType: TextInputType.text,
+          validator: AppValidators.securityAnswer,
         ),
       ],
     );
   }
 
+  // Shared InputDecoration for dropdown fields
   InputDecoration _inputDecoration() {
     return InputDecoration(
       hintStyle: const TextStyle(
           fontFamily: 'Montserrat',
           color: AppColors.textDarkPlaceholder,
           fontSize: 14),
-      contentPadding:
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.borderLight)),
       enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.borderLight)),
       focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide:
-              const BorderSide(color: AppColors.primary, width: 1.5)),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
       errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Colors.red, width: 1.2)),
       focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Colors.red, width: 1.5)),
-      errorStyle:
-          const TextStyle(fontFamily: 'Montserrat', fontSize: 12),
+      errorStyle: const TextStyle(fontFamily: 'Montserrat', fontSize: 12),
     );
   }
 }

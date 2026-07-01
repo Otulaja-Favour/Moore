@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
+import 'package:moove/components/app_input_field.dart';
 import 'package:moove/components/auth_header.dart';
 import 'package:moove/components/custom_button.dart';
 import 'package:moove/components/custom_text.dart';
@@ -53,47 +54,41 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            const MooreText(
-              'Terms & Conditions',
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textDarkPrimary,
-            ),
+            const MooreText('Terms & Conditions',
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textDarkPrimary),
             const SizedBox(height: 8),
             const Divider(color: AppColors.borderLight),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24.0),
+                padding: const EdgeInsets.all(24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: const [
                     MooreText(
-                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam pulvinar libero id orci blandit, ut mattis nec lacus vel purus ultricies interdum. Sed venenatis, ante ac accumsan purus bibendum. Suspendisse potenti.',
+                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam pulvinar libero id orci blandit, ut mattis nec lacus vel purus ultricies interdum.',
                       fontSize: 14,
                       color: AppColors.textDarkSecondary,
                       height: 1.6,
                     ),
                     SizedBox(height: 16),
-                    MooreText(
-                      '1. Agreement to Terms',
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textDarkPrimary,
-                    ),
+                    MooreText('1. Agreement to Terms',
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textDarkPrimary),
                     SizedBox(height: 8),
                     MooreText(
-                      'By accessing our services, you agree to be bound by these terms. If you do not agree, please do not use the application.',
+                      'By accessing our services, you agree to be bound by these terms.',
                       fontSize: 14,
                       color: AppColors.textDarkSecondary,
                       height: 1.5,
                     ),
                     SizedBox(height: 16),
-                    MooreText(
-                      '2. User Obligations',
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textDarkPrimary,
-                    ),
+                    MooreText('2. User Obligations',
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textDarkPrimary),
                     SizedBox(height: 8),
                     MooreText(
                       'You are responsible for keeping your credentials safe and maintaining accurate, updated information on your account profile.',
@@ -106,11 +101,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.all(24),
               child: MooreButton(
-                text: 'Accept & Close',
-                onPressed: () => Navigator.pop(context),
-              ),
+                  text: 'Accept & Close',
+                  onPressed: () => Navigator.pop(context)),
             ),
           ],
         ),
@@ -120,47 +114,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   void _handleSignUpSubmit() {
     if (_formKey.currentState!.validate()) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => VerifyPhoneOtpScreen(
-            phoneNumber: _phoneController.text.trim(),
-            email: _emailController.text.trim(),
-          ),
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) => VerifyPhoneOtpScreen(
+          phoneNumber: _phoneController.text.trim(),
+          email: _emailController.text.trim(),
         ),
-      );
+      ));
     }
   }
-
-  InputDecoration _fieldDecoration(String hint) => InputDecoration(
-        hintText: hint,
-        hintStyle: const TextStyle(
-          fontFamily: 'Montserrat',
-          color: AppColors.textDarkPlaceholder,
-          fontSize: 14,
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.borderLight),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.borderLight),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.red, width: 1.2),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.red, width: 1.5),
-        ),
-        errorStyle: const TextStyle(fontFamily: 'Montserrat', fontSize: 12),
-      );
 
   @override
   Widget build(BuildContext context) {
@@ -173,11 +134,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF4A6CF7),
               AppColors.gradientStart,
               AppColors.gradientEnd,
             ],
-            stops: [0.0, 0.45, 1.0],
           ),
         ),
         child: SafeArea(
@@ -203,76 +162,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ),
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(24.0),
+                    padding: const EdgeInsets.all(24),
                     child: Form(
                       key: _formKey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const MooreText(
-                            'Create your account',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.textDarkSecondary,
-                          ),
+                          const MooreText('Create your account',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.textDarkSecondary),
                           const SizedBox(height: 24),
 
                           // Email
-                          const MooreText(
-                            'Email Address',
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textDarkPrimary,
-                          ),
-                          const SizedBox(height: 8),
-                          TextFormField(
+                          LabeledInputField(
+                            label: 'Email Address',
                             controller: _emailController,
+                            hint: 'Enter Email Address',
                             keyboardType: TextInputType.emailAddress,
-                            style: const TextStyle(
-                                fontFamily: 'Montserrat', fontSize: 15),
-                            decoration: _fieldDecoration('Enter Email Address'),
                             validator: AppValidators.email,
                           ),
                           const SizedBox(height: 20),
 
                           // Phone
-                          const MooreText(
-                            'Phone Number',
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textDarkPrimary,
-                          ),
-                          const SizedBox(height: 8),
-                          TextFormField(
+                          LabeledInputField(
+                            label: 'Phone Number',
                             controller: _phoneController,
+                            hint: 'eg. 7032536254',
                             keyboardType: TextInputType.phone,
-                            style: const TextStyle(
-                                fontFamily: 'Montserrat', fontSize: 15),
-                            decoration: _fieldDecoration('eg. 7032536254').copyWith(
-                              prefixIcon: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
-                                margin: const EdgeInsets.only(right: 8),
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    right: BorderSide(color: AppColors.borderLight),
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    MooreText(
-                                      '+234',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.grey[700],
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Icon(Icons.keyboard_arrow_down,
-                                        size: 16, color: Colors.grey[600]),
-                                  ],
-                                ),
-                              ),
-                            ),
+                            prefixWidget: const PhonePrefixWidget(),
                             validator: AppValidators.phoneNumber,
                           ),
                           const SizedBox(height: 24),
@@ -280,56 +198,41 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           // Terms
                           Wrap(
                             children: [
-                              const MooreText(
-                                "By proceeding you agree to Moore's ",
-                                fontSize: 12,
-                                color: AppColors.textDarkSecondary,
-                              ),
+                              const MooreText("By proceeding you agree to Moore's ",
+                                  fontSize: 12, color: AppColors.textDarkSecondary),
                               GestureDetector(
                                 onTap: _showTermsBottomSheet,
-                                child: const MooreText(
-                                  'Terms of Service',
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.textBlue,
-                                ),
+                                child: const MooreText('Terms of Service',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textBlue),
                               ),
-                              const MooreText(
-                                ' and ',
-                                fontSize: 12,
-                                color: AppColors.textDarkSecondary,
-                              ),
+                              const MooreText(' and ',
+                                  fontSize: 12, color: AppColors.textDarkSecondary),
                               GestureDetector(
                                 onTap: _showTermsBottomSheet,
-                                child: const MooreText(
-                                  'Privacy Policy',
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.textBlue,
-                                ),
+                                child: const MooreText('Privacy Policy',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textBlue),
                               ),
                             ],
                           ),
                           const SizedBox(height: 36),
 
                           MooreButton(
-                            text: 'Proceed',
-                            onPressed: _handleSignUpSubmit,
-                          ),
+                              text: 'Proceed', onPressed: _handleSignUpSubmit),
                           const SizedBox(height: 24),
 
                           Center(
                             child: TextButton(
-                              onPressed: () => Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (_) => const LoginScreen()),
-                              ),
-                              child: const MooreText(
-                                'I already have an account',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textBlue,
-                              ),
+                              onPressed: () => Navigator.of(context)
+                                  .pushReplacement(MaterialPageRoute(
+                                      builder: (_) => const LoginScreen())),
+                              child: const MooreText('I already have an account',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textBlue),
                             ),
                           ),
                         ],

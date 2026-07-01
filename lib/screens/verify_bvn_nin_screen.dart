@@ -7,6 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:moove/components/app_input_field.dart';
 import 'package:moove/components/auth_header.dart';
 import 'package:moove/components/custom_button.dart';
 import 'package:moove/components/custom_text.dart';
@@ -255,21 +256,17 @@ class _VerifyBvnNinScreenState extends State<VerifyBvnNinScreen> {
                         // Number field
                         _buildLabel('$_numberLabel *'),
                         const SizedBox(height: 8),
-                        TextFormField(
+                        AppInputField(
                           controller: _numberController,
+                          hint: 'eg. 12345678901',
                           keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(_numberLength),
                           ],
+                          maxLength: _numberLength,
                           onChanged: (_) {
-                            if (_bvnApiError) {
-                              setState(() => _bvnApiError = false);
-                            }
+                            if (_bvnApiError) setState(() => _bvnApiError = false);
                           },
-                          style: const TextStyle(
-                              fontFamily: 'Montserrat', fontSize: 15),
-                          decoration: _numberFieldDecoration(),
                           validator: (v) {
                             final formatError = AppValidators.bvnNinFormat(v, _numberLabel);
                             if (formatError != null) return formatError;
@@ -282,18 +279,15 @@ class _VerifyBvnNinScreenState extends State<VerifyBvnNinScreen> {
                         // Date of birth
                         _buildLabel('Date of birth *'),
                         const SizedBox(height: 8),
-                        TextFormField(
+                        AppInputField(
                           controller: _dobController,
+                          hint: 'MM/DD/YYYY',
                           readOnly: true,
                           onTap: _pickDate,
-                          style: const TextStyle(
-                              fontFamily: 'Montserrat', fontSize: 15),
-                          decoration: _inputDecoration('MM/DD/YYYY').copyWith(
-                            suffixIcon: const Icon(
-                              Icons.calendar_today_outlined,
-                              size: 18,
-                              color: AppColors.textDarkSecondary,
-                            ),
+                          suffixIcon: const Icon(
+                            Icons.calendar_today_outlined,
+                            size: 18,
+                            color: AppColors.textDarkSecondary,
                           ),
                           validator: (v) {
                             if (v == null || v.isEmpty) {
@@ -339,79 +333,6 @@ class _VerifyBvnNinScreenState extends State<VerifyBvnNinScreen> {
         fontSize: 13,
         fontWeight: FontWeight.w600,
         color: AppColors.textDarkPrimary,
-      );
-
-  // Number field decoration — turns red when _bvnApiError is true
-  InputDecoration _numberFieldDecoration() {
-    final hasError = _bvnApiError;
-    return InputDecoration(
-      hintText: 'eg. 12345678901',
-      hintStyle: const TextStyle(
-        fontFamily: 'Montserrat',
-        color: AppColors.textDarkPlaceholder,
-        fontSize: 14,
-      ),
-      suffixIcon: hasError
-          ? const Icon(Icons.error_outline, color: Colors.red, size: 20)
-          : null,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: hasError ? Colors.red : AppColors.borderLight),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(
-            color: hasError ? Colors.red : AppColors.borderLight,
-            width: hasError ? 1.4 : 1.0),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(
-            color: hasError ? Colors.red : AppColors.primary, width: 1.5),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Colors.red, width: 1.4),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Colors.red, width: 1.5),
-      ),
-      errorStyle: const TextStyle(fontFamily: 'Montserrat', fontSize: 12),
-    );
-  }
-
-  InputDecoration _inputDecoration(String hint) => InputDecoration(
-        hintText: hint,
-        hintStyle: const TextStyle(
-          fontFamily: 'Montserrat',
-          color: AppColors.textDarkPlaceholder,
-          fontSize: 14,
-        ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.borderLight),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.borderLight),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.red, width: 1.2),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.red, width: 1.5),
-        ),
-        errorStyle: const TextStyle(fontFamily: 'Montserrat', fontSize: 12),
       );
 }
 
