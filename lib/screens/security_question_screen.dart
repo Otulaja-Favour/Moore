@@ -6,6 +6,8 @@ import 'package:moove/components/custom_text.dart';
 import 'package:moove/constants/colors.dart';
 import 'package:moove/screens/login_flow_screens.dart';
 
+import 'package:moove/components/numeric_keypad.dart';
+
 class SecurityQuestionScreen extends StatefulWidget {
   final String phoneNumber;
   const SecurityQuestionScreen({super.key, required this.phoneNumber});
@@ -51,7 +53,7 @@ class _SecurityQuestionScreenState extends State<SecurityQuestionScreen> {
               bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
             child: Container(
-              height: MediaQuery.of(context).size.height * 0.65,
+              height: MediaQuery.of(context).size.height * 0.85,
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -237,39 +239,40 @@ class _OtpBottomSheetFlow extends StatefulWidget {
 }
 
 class _OtpBottomSheetFlowState extends State<_OtpBottomSheetFlow> {
-  final List<TextEditingController> _controllers = List.generate(4, (_) => TextEditingController());
-  final List<FocusNode> _focusNodes = List.generate(4, (_) => FocusNode());
+  // Pure string list — no TextFormField, no system keyboard
+  final List<String> _digits = ['', '', '', ''];
   bool _isCodeInvalid = false;
-  bool _showFailureContent = false;
 
-  @override
-  void initState() {
-    super.initState();
-    // Pre-populate with "5" to match the Figma mockup initially
-    for (int i = 0; i < 4; i++) {
-      _controllers[i].text = '5';
-    }
+  static const int _length = 4;
+
+  void _onKeyTap(String value) {
+    final idx = _digits.indexWhere((d) => d.isEmpty);
+    if (idx == -1) return;
+    setState(() {
+      _digits[idx] = value;
+      _isCodeInvalid = false;
+    });
   }
 
-  @override
-  void dispose() {
-    for (var controller in _controllers) {
-      controller.dispose();
+  void _onBackspace() {
+    for (int i = _length - 1; i >= 0; i--) {
+      if (_digits[i].isNotEmpty) {
+        setState(() {
+          _digits[i] = '';
+          _isCodeInvalid = false;
+        });
+        return;
+      }
     }
-    for (var node in _focusNodes) {
-      node.dispose();
-    }
-    super.dispose();
   }
 
   void _handleProceed() {
-    final otp = _controllers.map((c) => c.text).join();
-    if (otp.length < 4) {
+    final otp = _digits.join();
+    if (otp.length < _length) {
       setState(() => _isCodeInvalid = true);
       return;
     }
     if (otp == '1234') {
-      // OTP correct — show Device Linked Successfully sheet
       Navigator.pop(context); // close OTP sheet
       showModalBottomSheet(
         context: context,
@@ -288,23 +291,21 @@ class _OtpBottomSheetFlowState extends State<_OtpBottomSheetFlow> {
         ),
       );
     } else {
-      setState(() => _isCodeInvalid = true);
+      setState(() {
+        _isCodeInvalid = true;
+        for (int i = 0; i < _length; i++) {
+          _digits[i] = '';
+        }
+      });
     }
   }
 
   void _handleTryAgain() {
     setState(() {
-      _showFailureContent = false;
+      for (int i = 0; i < _length; i++) {
+        _digits[i] = '';
+      }
       _isCodeInvalid = false;
-      for (var controller in _controllers) {
-        controller.clear();
-      }
-    });
-    // Wait a brief frame for context layout transition, then focus first field
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        _focusNodes[0].requestFocus();
-      }
     });
   }
 
@@ -313,7 +314,6 @@ class _OtpBottomSheetFlowState extends State<_OtpBottomSheetFlow> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Drag Indicator Handle
         Container(
           width: 40,
           height: 4,
@@ -323,22 +323,12 @@ class _OtpBottomSheetFlowState extends State<_OtpBottomSheetFlow> {
             borderRadius: BorderRadius.circular(2),
           ),
         ),
-        Expanded(
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: _showFailureContent 
-                ? _buildFailureContent(context) 
-                : _buildOtpContent(context),
-          ),
-        ),
+        Expanded(child: _buildOtpContent(context)),
       ],
     );
   }
 
   Widget _buildOtpContent(BuildContext context) {
-    final themeBorderColor = _isCodeInvalid ? Colors.red[300]! : AppColors.borderLight;
-    final themeTextColor = _isCodeInvalid ? Colors.red : AppColors.textDarkPrimary;
-
     // Mask the phone number
     String masked = widget.phoneNumber;
     final digits = widget.phoneNumber.replaceAll(RegExp(r'\D'), '');
@@ -346,225 +336,146 @@ class _OtpBottomSheetFlowState extends State<_OtpBottomSheetFlow> {
       masked = '+${digits.substring(0, 5)}****${digits.substring(digits.length - 3)}';
     }
 
-    return SingleChildScrollView(
-      key: const ValueKey('OtpContent'),
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(height: 16),
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.06),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.lock_person_outlined,
-              color: AppColors.primary,
-              size: 40,
-            ),
-          ),
-          const SizedBox(height: 20),
-          const MooreText(
-            'Verify OTP',
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-            color: AppColors.textDarkPrimary,
-          ),
-          const SizedBox(height: 8),
-          RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              style: const TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 13,
-                color: AppColors.textDarkSecondary,
-              ),
+    return Column(
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const TextSpan(text: 'We sent a 4 digit code to '),
-                TextSpan(
-                  text: masked,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textDarkPrimary,
+                Container(
+                  width: 72,
+                  height: 72,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.06),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.lock_person_outlined,
+                    color: AppColors.primary,
+                    size: 36,
                   ),
                 ),
+                const SizedBox(height: 16),
+                const MooreText(
+                  'Verify OTP',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textDarkPrimary,
+                ),
+                const SizedBox(height: 8),
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style: const TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 13,
+                      color: AppColors.textDarkSecondary,
+                    ),
+                    children: [
+                      const TextSpan(text: 'We sent a 4 digit code to '),
+                      TextSpan(
+                        text: masked,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textDarkPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.07),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const MooreText(
+                    'Test OTP: 1234',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.primary,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // OTP display boxes
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: List.generate(_length, (i) {
+                    final filled = _digits[i].isNotEmpty;
+                    final borderColor = _isCodeInvalid
+                        ? Colors.red
+                        : filled
+                            ? AppColors.primary
+                            : AppColors.borderLight;
+                    return Container(
+                      width: (MediaQuery.of(context).size.width - 48 - 36) / 4,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: borderColor,
+                          width: filled || _isCodeInvalid ? 1.5 : 1.0,
+                        ),
+                        color: Colors.white,
+                      ),
+                      alignment: Alignment.center,
+                      child: MooreText(
+                        _digits[i],
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                        color: _isCodeInvalid ? Colors.red : AppColors.textDarkPrimary,
+                      ),
+                    );
+                  }),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Opacity(
+                      opacity: _isCodeInvalid ? 1.0 : 0.0,
+                      child: const MooreText(
+                        'Invalid code',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.red,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: _handleTryAgain,
+                      child: const MooreText(
+                        'Resend code',
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textBlue,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                MooreButton(text: 'Proceed', onPressed: _handleProceed),
+                const SizedBox(height: 8),
               ],
             ),
           ),
-          const SizedBox(height: 8),
-          // Test hint
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.07),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const MooreText(
-              'Test OTP: 1234',
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: AppColors.primary,
-            ),
-          ),
-          const SizedBox(height: 24),
-          // OTP Input Fields
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: List.generate(4, (index) {
-              return SizedBox(
-                width: 56,
-                height: 56,
-                child: TextFormField(
-                  controller: _controllers[index],
-                  focusNode: _focusNodes[index],
-                  keyboardType: TextInputType.number,
-                  textAlign: TextAlign.center,
-                  maxLength: 1,
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: themeTextColor,
-                  ),
-                  decoration: InputDecoration(
-                    counterText: '',
-                    contentPadding: EdgeInsets.zero,
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: themeBorderColor, width: 1.5),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: _isCodeInvalid ? Colors.red : AppColors.primary,
-                        width: 2.0,
-                      ),
-                    ),
-                  ),
-                  onChanged: (value) {
-                    if (value.isNotEmpty && index < 3) {
-                      _focusNodes[index + 1].requestFocus();
-                    } else if (value.isEmpty && index > 0) {
-                      _focusNodes[index - 1].requestFocus();
-                    }
-                  },
-                ),
-              );
-            }),
-          ),
-          const SizedBox(height: 16),
-          // Error & Resend Options
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Opacity(
-                opacity: _isCodeInvalid ? 1.0 : 0.0,
-                child: const MooreText(
-                  'invalid code',
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.red,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _isCodeInvalid = false;
-                    for (var controller in _controllers) {
-                      controller.clear();
-                    }
-                    _focusNodes[0].requestFocus();
-                  });
-                },
-                child: const MooreText(
-                  'Resend code',
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textBlue,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 36),
-          // Proceed Button
-          MooreButton(
-            text: 'Proceed',
-            onPressed: _handleProceed,
-          ),
-          const SizedBox(height: 12),
-        ],
-      ),
+        ),
+        // Numeric keypad
+        const Divider(height: 1, color: AppColors.borderLight),
+        const SizedBox(height: 4),
+        NumericKeypad(
+          onKeyTap: _onKeyTap,
+          onBackspace: _onBackspace,
+          showSubLabels: false,
+        ),
+        const SizedBox(height: 12),
+      ],
     );
   }
 
-  Widget _buildFailureContent(BuildContext context) {
-    return SingleChildScrollView(
-      key: const ValueKey('FailureContent'),
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(height: 16),
-          // Sad Face Emoji Icon Container
-          Container(
-            width: 80,
-            height: 80,
-            decoration: const BoxDecoration(
-              color: Color(0xFFFEF2F2),
-              shape: BoxShape.circle,
-            ),
-            child: const Center(
-              child: MooreText(
-                '😞',
-                fontSize: 44,
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          // Error Title
-          const MooreText(
-            'Device Binding\nFailed',
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-            color: Colors.redAccent,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 12),
-          // Explanatory Text
-          MooreText(
-            'We were unable to securely bind this device to your Moore account. Please check your network or try again.',
-            fontSize: 13,
-            fontWeight: FontWeight.w400,
-            color: Colors.grey[600],
-            textAlign: TextAlign.center,
-            height: 1.5,
-          ),
-          const SizedBox(height: 36),
-          // Try Again Button
-          MooreButton(
-            text: 'Try Again',
-            onPressed: _handleTryAgain,
-          ),
-          const SizedBox(height: 16),
-          // Close Button
-          MooreButton(
-            text: 'Close',
-            isOutlined: true,
-            textColor: AppColors.primary,
-            borderColor: AppColors.primary,
-            onPressed: () {
-              Navigator.pop(context); // Close bottom sheet
-            },
-          ),
-          const SizedBox(height: 12),
-        ],
-      ),
-    );
-  }
-}
+  // Remove old _buildFailureContent — failure now just shows invalid state inline
 
 // ─────────────────────────────────────────────
 // Device Linked Successfully bottom sheet
@@ -600,7 +511,7 @@ class _DeviceLinkedSheet extends StatelessWidget {
 
           // Balloon image
           Image.asset(
-            'assest/img/congratulation.png',
+            AppAssets.congratulation,
             height: 130,
             fit: BoxFit.contain,
             errorBuilder: (_, __, ___) =>
