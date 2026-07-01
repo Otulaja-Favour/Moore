@@ -5,7 +5,9 @@ import 'package:moove/components/auth_header.dart';
 import 'package:moove/components/custom_button.dart';
 import 'package:moove/components/custom_text.dart';
 import 'package:moove/constants/colors.dart';
+import 'package:moove/constants/assets.dart';
 import 'package:moove/screens/dashboard_screen.dart';
+import 'package:moove/screens/welcome_screen.dart';
 import 'package:moove/services/storage_service.dart';
 import 'package:moove/utils/validators.dart';
 
@@ -127,9 +129,9 @@ class _SetSecurityQuestionsScreenState
       backgroundColor: Colors.transparent,
       isDismissible: false,
       builder: (_) => _CongratulationsSheet(
-        onGoToDashboard: () {
+        onLogin: () {
           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const DashboardScreen()),
+            MaterialPageRoute(builder: (_) => const WelcomeScreen()),
             (route) => false,
           );
         },
@@ -333,13 +335,13 @@ class _SetSecurityQuestionsScreenState
 // Congratulations bottom sheet
 // ─────────────────────────────────────────────
 class _CongratulationsSheet extends StatelessWidget {
-  final VoidCallback onGoToDashboard;
-  const _CongratulationsSheet({required this.onGoToDashboard});
+  final VoidCallback onLogin;
+  const _CongratulationsSheet({required this.onLogin});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.55,
+      height: MediaQuery.of(context).size.height * 0.60,
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -359,19 +361,28 @@ class _CongratulationsSheet extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          const Text('🎉', style: TextStyle(fontSize: 64)),
-          const SizedBox(height: 20),
+
+          // congratulation.png image
+          Image.asset(
+            AppAssets.congratulation,
+            height: 160,
+            fit: BoxFit.contain,
+            errorBuilder: (_, __, ___) =>
+                const Text('🎉', style: TextStyle(fontSize: 64)),
+          ),
+          const SizedBox(height: 16),
+
           const MooreText(
             'Congratulations',
             fontSize: 22,
             fontWeight: FontWeight.w800,
             color: AppColors.textDarkPrimary,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 32),
             child: MooreText(
-              "Your account has been created successfully. Welcome to Moore!",
+              "You're 3 steps away from completing your profile. Would you like to complete the sign-up process?",
               fontSize: 13,
               color: AppColors.textDarkSecondary,
               textAlign: TextAlign.center,
@@ -379,13 +390,14 @@ class _CongratulationsSheet extends StatelessWidget {
             ),
           ),
           const Spacer(),
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: MooreButton(
-              text: 'Go to Dashboard',
+              text: 'Login',
               onPressed: () {
                 Navigator.pop(context);
-                onGoToDashboard();
+                onLogin();
               },
             ),
           ),

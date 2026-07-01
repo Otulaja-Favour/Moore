@@ -387,7 +387,34 @@ class _PasscodeScaffold extends StatelessWidget {
               const Spacer(flex: 2),
 
               // ── Icon graphic ──
-              _buildIconGraphic(),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    width: 96,
+                    height: 96,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.08),
+                      border: Border.all(
+                          color: Colors.white.withOpacity(0.15), width: 1.5),
+                    ),
+                  ),
+                  Container(
+                    width: 68,
+                    height: 68,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.13),
+                    ),
+                    child: const Icon(
+                      Icons.password_outlined,
+                      color: Colors.white,
+                      size: 32,
+                    ),
+                  ),
+                ],
+              ),
 
               const SizedBox(height: 36),
 
@@ -433,35 +460,6 @@ class _PasscodeScaffold extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildIconGraphic() {
-    // Figma shows a small illustration: a card/keypad icon inside a soft circle
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        // Outer glow ring
-        Container(
-          width: 96,
-          height: 96,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white.withOpacity(0.06),
-            border: Border.all(color: Colors.white.withOpacity(0.10), width: 1.5),
-          ),
-        ),
-        // Inner circle
-        Container(
-          width: 70,
-          height: 70,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white.withOpacity(0.12),
-          ),
-          child: const Icon(Icons.grid_view_rounded, color: Colors.white, size: 30),
-        ),
-      ],
     );
   }
 

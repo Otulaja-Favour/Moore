@@ -198,6 +198,7 @@ class _VerifyBvnNinScreenState extends State<VerifyBvnNinScreen> {
                               label: 'BVN',
                               subLabel: 'Bank Verification\nNumber',
                               isSelected: _mode == _VerifyMode.bvn,
+                              icon: Icons.credit_card_outlined,
                               onTap: () => setState(() {
                                 _mode = _VerifyMode.bvn;
                                 _numberController.clear();
@@ -211,6 +212,7 @@ class _VerifyBvnNinScreenState extends State<VerifyBvnNinScreen> {
                               label: 'NIN',
                               subLabel: 'National Identification\nNumber',
                               isSelected: _mode == _VerifyMode.nin,
+                              icon: Icons.badge_outlined,
                               onTap: () => setState(() {
                                 _mode = _VerifyMode.nin;
                                 _numberController.clear();
@@ -545,12 +547,14 @@ class _ModeCard extends StatelessWidget {
   final String subLabel;
   final bool isSelected;
   final VoidCallback onTap;
+  final IconData icon;
 
   const _ModeCard({
     required this.label,
     required this.subLabel,
     required this.isSelected,
     required this.onTap,
+    required this.icon,
   });
 
   @override
@@ -560,59 +564,86 @@ class _ModeCard extends StatelessWidget {
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
+            color: isSelected
+                ? AppColors.primary.withOpacity(0.05)
+                : Colors.white,
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: isSelected ? AppColors.primary : AppColors.borderLight,
-              width: isSelected ? 1.8 : 1.0,
+              width: isSelected ? 2.0 : 1.0,
             ),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                      color: AppColors.primary.withOpacity(0.08),
-                      blurRadius: 8,
-                      offset: const Offset(0, 3),
-                    )
-                  ]
-                : [],
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-          child: Row(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 18,
-                height: 18,
-                margin: const EdgeInsets.only(top: 2, right: 10),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color:
-                        isSelected ? AppColors.primary : AppColors.borderLight,
-                    width: isSelected ? 5.0 : 1.5,
+              // Top row: icon left | selection indicator right
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? AppColors.primary.withOpacity(0.10)
+                          : Colors.grey.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      icon,
+                      color: isSelected
+                          ? AppColors.primary
+                          : AppColors.textDarkSecondary,
+                      size: 26,
+                    ),
                   ),
-                ),
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isSelected ? AppColors.primary : Colors.transparent,
+                      border: Border.all(
+                        color: isSelected
+                            ? AppColors.primary
+                            : AppColors.borderLight,
+                        width: 1.5,
+                      ),
+                    ),
+                    child: isSelected
+                        ? const Icon(Icons.check, color: Colors.white, size: 14)
+                        : null,
+                  ),
+                ],
               ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    MooreText(
-                      label,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textDarkPrimary,
-                    ),
-                    const SizedBox(height: 4),
-                    MooreText(
-                      subLabel,
-                      fontSize: 11,
-                      color: AppColors.textDarkSecondary,
-                      height: 1.4,
-                    ),
-                  ],
-                ),
+              const SizedBox(height: 14),
+
+              // Bold label
+              MooreText(
+                label,
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+                color: isSelected ? AppColors.primary : AppColors.textDarkPrimary,
+              ),
+              const SizedBox(height: 4),
+
+              // Sub label
+              MooreText(
+                subLabel,
+                fontSize: 12,
+                color: AppColors.textDarkSecondary,
+                height: 1.4,
               ),
             ],
           ),

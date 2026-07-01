@@ -61,14 +61,8 @@ class AuthHeader extends StatelessWidget {
                       fit: BoxFit.contain,
                       errorBuilder: (_, __, ___) => const SizedBox.shrink(),
                     ),
-                    const SizedBox(width: 6),
-                    const MooreText(
-                      'Moore',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textLightPrimary,
-                      letterSpacing: 0.3,
-                    ),
+                    const SizedBox(width: 4),
+                    
                   ],
                 )
               else
