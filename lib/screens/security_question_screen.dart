@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:moove/components/auth_header.dart';
 import 'package:moove/components/custom_button.dart';
 import 'package:moove/components/custom_text.dart';
+import 'package:moove/constants/assets.dart';
 import 'package:moove/constants/colors.dart';
 import 'package:moove/screens/login_flow_screens.dart';
 
@@ -474,8 +475,7 @@ class _OtpBottomSheetFlowState extends State<_OtpBottomSheetFlow> {
       ],
     );
   }
-
-  // Remove old _buildFailureContent — failure now just shows invalid state inline
+}
 
 // ─────────────────────────────────────────────
 // Device Linked Successfully bottom sheet

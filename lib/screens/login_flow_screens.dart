@@ -18,7 +18,8 @@ import 'package:moove/screens/dashboard_screen.dart';
 // USE AS PRIMARY DEVICE
 // ═══════════════════════════════════════════════════════════
 class UsePrimaryDeviceScreen extends StatelessWidget {
-  const UsePrimaryDeviceScreen({super.key});
+  final String phoneNumber;
+  const UsePrimaryDeviceScreen({super.key, required this.phoneNumber});
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +101,9 @@ class UsePrimaryDeviceScreen extends StatelessWidget {
                         text: 'Proceed',
                         onPressed: () => Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (_) => const SecurityQuestionScreen(),
+                            builder: (_) => SecurityQuestionScreen(
+                              phoneNumber: phoneNumber,
+                            ),
                           ),
                         ),
                       ),
