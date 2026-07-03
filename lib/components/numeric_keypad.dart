@@ -2,17 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:moove/components/custom_text.dart';
 import 'package:moove/constants/colors.dart';
 
-/// Reusable phone-style numeric keypad.
-/// Used on OTP screens (white bg, dark keys) and passcode screens (handled separately).
+/// Reusable numeric keypad where every key is a proper tappable button.
 class NumericKeypad extends StatelessWidget {
   final void Function(String) onKeyTap;
   final VoidCallback onBackspace;
-
-  /// Optional bottom-left label (e.g. "Reset"). Null = empty space.
   final String? bottomLeftLabel;
   final VoidCallback? onBottomLeftTap;
-
-  /// Whether to show ABC/DEF sub-labels under digits. False for OTP screens.
   final bool showSubLabels;
 
   const NumericKeypad({
@@ -35,84 +30,98 @@ class NumericKeypad extends StatelessWidget {
     '9': 'WXYZ',
   };
 
-  Widget _digitKey(String digit) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: () => onKeyTap(digit),
-        child: Container(
-          height: 60,
-          alignment: Alignment.center,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              MooreText(
-                digit,
-                fontSize: 24,
-                fontWeight: FontWeight.w500,
-                color: AppColors.textDarkPrimary,
-              ),
-              if (showSubLabels && _subLabels[digit] != null)
-                MooreText(
-                  _subLabels[digit]!,
-                  fontSize: 9,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textDarkSecondary,
-                  letterSpacing: 1.2,
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Row(children: [_digitKey('1'), _digitKey('2'), _digitKey('3')]),
-          Row(children: [_digitKey('4'), _digitKey('5'), _digitKey('6')]),
-          Row(children: [_digitKey('7'), _digitKey('8'), _digitKey('9')]),
+          _row(['1', '2', '3']),
+          _row(['4', '5', '6']),
+          _row(['7', '8', '9']),
           Row(
             children: [
-              // Bottom-left
+              // Bottom-left: optional label or empty spacer
               Expanded(
                 child: bottomLeftLabel != null
-                    ? GestureDetector(
-                        onTap: onBottomLeftTap,
-                        child: Container(
-                          height: 60,
-                          alignment: Alignment.center,
-                          child: MooreText(
-                            bottomLeftLabel!,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textDarkSecondary,
-                          ),
+                    ? _actionBtn(
+                        onTap: onBottomLeftTap ?? () {},
+                        child: MooreText(
+                          bottomLeftLabel!,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textDarkSecondary,
                         ),
                       )
-                    : const SizedBox(height: 60),
+                    : const SizedBox(height: 64),
               ),
-              _digitKey('0'),
+              Expanded(child: _digitBtn('0')),
               // Backspace
               Expanded(
-                child: GestureDetector(
+                child: _actionBtn(
                   onTap: onBackspace,
-                  child: const SizedBox(
-                    height: 60,
-                    child: Icon(
-                      Icons.backspace_outlined,
-                      color: AppColors.textDarkPrimary,
-                      size: 22,
-                    ),
+                  child: const Icon(
+                    Icons.backspace_outlined,
+                    color: AppColors.textDarkPrimary,
+                    size: 22,
                   ),
                 ),
               ),
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _row(List<String> digits) {
+    return Row(
+      children: digits.map((d) => Expanded(child: _digitBtn(d))).toList(),
+    );
+  }
+
+  Widget _digitBtn(String digit) {
+    return _actionBtn(
+      onTap: () => onKeyTap(digit),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          MooreText(
+            digit,
+            fontSize: 24,
+            fontWeight: FontWeight.w500,
+            color: AppColors.textDarkPrimary,
+          ),
+          if (showSubLabels && _subLabels[digit] != null)
+            MooreText(
+              _subLabels[digit]!,
+              fontSize: 9,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textDarkSecondary,
+              letterSpacing: 1.2,
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _actionBtn({required VoidCallback onTap, required Widget child}) {
+    return SizedBox(
+      height: 64,
+      child: TextButton(
+        onPressed: onTap,
+        style: TextButton.styleFrom(
+          foregroundColor: AppColors.primary.withOpacity(0.12),
+          backgroundColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: EdgeInsets.zero,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          overlayColor: AppColors.primary,
+        ),
+        child: child,
       ),
     );
   }
